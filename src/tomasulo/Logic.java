@@ -197,6 +197,7 @@ public class Logic implements LogicInterface {
 				for(CalcReservationStation r: rs)
 					if(!r.isBusy){//find an idle reservation station
 						ret = true;
+						c.issue = clk + 1;
 						pc++;//successfully issued
 						r.op = c.op;
 						r.c = c;
@@ -236,6 +237,7 @@ public class Logic implements LogicInterface {
 				for(StoreReservationStation r: rstore){
 					if(!r.isBusy){//find an idle reservation station
 						ret = true;
+						c.issue = clk + 1;
 						pc++;//successfully issued
 						r.c = c;
 						r.isBusy = true;
@@ -260,6 +262,7 @@ public class Logic implements LogicInterface {
 					if(!r.isBusy)
 					{
 						ret = true;
+						c.issue = clk + 1;
 						pc++;//successfully issued
 						r.c = c;
 						r.isBusy = true;
@@ -292,7 +295,20 @@ public class Logic implements LogicInterface {
 	}
 
 	public static void main(String[] args) {
-
+		LogicInterface logic = new Logic();
+		ArrayList<Command> cs = logic.getCommands();
+		cs.add(new Command("LD", new String[]{"F0","1","R0"}));
+		cs.add(new Command("LD", new String[]{"F1","0","R1"}));
+		cs.add(new Command("ADDD", new String[]{"F2","F0","F1"}));
+		double[] m = logic.getMemory();
+		m[0] = 178;
+		m[1] = 12;
+		while(logic.runCycle()){
+			
+		}
+		for(Command c: cs){
+			System.out.printf("%d %d %d %f\n",c.issue, c.comp, c.result, c.value); 
+		}
 	}
 
 }
