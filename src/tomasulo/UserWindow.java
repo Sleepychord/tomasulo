@@ -92,10 +92,32 @@ public class UserWindow {
 				 if(model.getValueAt(i, j).equals("-1"))
 				 model.setValueAt("", i, j);
 		}
-		//-------TODO others
+		//load queue table
+		LoadReservationStation[] rs= (LoadReservationStation[])logic.getReservationStations("LOAD");
+		for(int i = 0;i < rs.length;i++)
+		{
+			loadq.setValueAt(rs[i].isBusy?"Yes":"No", i, 1);
+			loadq.setValueAt(rs[i].addr, i, 2);
+		}
+		//store queue table
+		StoreReservationStation[] store_rs = (StoreReservationStation[])logic.getReservationStations("STORE");
+		for(int i = 0;i < store_rs.length;i++){
+			storeq.setValueAt(store_rs[i].isBusy?"Yes":"No", i, 1);
+			storeq.setValueAt(store_rs[i].addr, i, 2);
+			storeq.setValueAt(store_rs[i].qj == null?Double.toString(store_rs[i].vj):"", i, 3);
+			storeq.setValueAt(store_rs[i].qj == null?"":store_rs[i].qj.name, i, 4);
+		}
+		//calc table
+		CalcReservationStation[] add_rs = (CalcReservationStation[])logic.getReservationStations("ADD");
+		for(int i = 0;i < add_rs.length;i++)
+		{
+			
+		}
 	}
 	public void displayMemory(int addr){
 		//update table
+		startAddr = addr;
+		updateTable();
 	}
 	public UserWindow(){
 		logic = new Logic();
