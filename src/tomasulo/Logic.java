@@ -1,5 +1,6 @@
 package tomasulo;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Logic implements LogicInterface {
@@ -98,6 +99,7 @@ public class Logic implements LogicInterface {
 		boolean ret = false;
 		for(ReservationStation r: rs){
 			if(r.isBusy && r.time >= 0){
+//				System.out.printf("%d countdown " + r.c.op+"\n", clk+1);
 				ret = true;
 				r.time--;
 				if(r.time == 0){//finish a command
@@ -132,7 +134,10 @@ public class Logic implements LogicInterface {
 	public boolean runCycle() {
 		boolean ret = false;
 		//count down
-		ret |= countDown(radd) || countDown(rmul) || countDown(rload) || countDown(rstore);
+		ret |= countDown(radd);
+		ret |= countDown(rmul);
+		ret |= countDown(rload);
+		ret |= countDown(rstore);
 		//check waiting
 		for(CalcReservationStation r: radd)
 			if(r.isBusy && r.time < 0)	//waiting 
@@ -297,15 +302,15 @@ public class Logic implements LogicInterface {
 	public static void main(String[] args) {
 		LogicInterface logic = new Logic();
 		ArrayList<Command> cs = logic.getCommands();
-		cs.add(new Command("LD", new String[]{"F0","1","R0"}));
-		cs.add(new Command("LD", new String[]{"F1","0","R1"}));
-		cs.add(new Command("ADDD", new String[]{"F2","F0","F1"}));
-		double[] m = logic.getMemory();
-		m[0] = 178;
-		m[1] = 12;
-		while(logic.runCycle()){
-			
+		try {
+			Helper.readCommandsFromFile("testcase.txt", cs);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
+		double[] m = logic.getMemory();
+		m[34] = 20;
+		m[45] = 12;
+		while(logic.runCycle()){}
 		for(Command c: cs){
 			System.out.printf("%d %d %d %f\n",c.issue, c.comp, c.result, c.value); 
 		}
