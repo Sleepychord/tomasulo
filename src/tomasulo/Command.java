@@ -11,4 +11,7 @@ public class Command {
 		arg = _arg;
 		issue = comp = result = -1;
 	}
+	String[] toStringArray(){
+		return new String[]{op, arg[0], arg[1], arg[2], Integer.toString(issue), Integer.toString(comp), Integer.toString(result)};
+	}
 }

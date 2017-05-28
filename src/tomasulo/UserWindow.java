@@ -4,13 +4,14 @@ import java.awt.FlowLayout;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import javax.swing.*; 
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
 public class UserWindow {
 	JFrame mainframe;
 	JToolBar toolbar;
 	JPanel panetop,panecenter;
-	JTable Instr,state,loadq,stroeq,station,funit,runit,mem;
+	JTable instr,loadq,storeq,station,funit,runit,mem;
 	JLabel clock;
 	//resources
 	LogicInterface logic;
@@ -38,7 +39,6 @@ public class UserWindow {
 		//Logic.clear() & updateTable, clock...
 		logic.clear();
 		updateTable();
-		clock.setText("0");
 	}
 	public void openEditableMode(){
 		//disable some buttons
@@ -51,6 +51,23 @@ public class UserWindow {
 	}
 	public void updateTable(){
 		//get all data from logic & set them in table, update
+		
+		//-------instr table
+		for(int i = 0;i < cs.size();i++)
+		{
+//			 System.out.println(instr.getModel().getClass().getName());
+			 DefaultTableModel model = (DefaultTableModel) (instr.getModel());
+			 String [] data = cs.get(i).toStringArray();
+			 if(model.getRowCount() <= i)//if cs is more than row count
+				 model.addRow(data);
+			 else{
+				 for(int j = 0;j < data.length;j++){
+					 model.setValueAt(data[j], i, j);
+//					 System.out.println(model.getValueAt(i, j));
+				 }
+			 }				 
+		}
+		//-------TODO others
 	}
 	public void displayMemory(int addr){
 		//update table
@@ -108,7 +125,17 @@ public class UserWindow {
 		
 		clock = new JLabel("0");
 		panecenter.add(clock);
-		
+		//construct tables
+		//------command table
+		final Object[] commandColumnNames = 
+			{"Operation", "Arg1", "Arg2", "Arg3", "issue", "exec comp", "write result"};
+		DefaultTableModel instr_dtm = new DefaultTableModel(new Object[][]{}, commandColumnNames);
+		instr = new JTable(instr_dtm);
+		instr.getTableHeader().setVisible(true);
+		panecenter.add(new JScrollPane(instr));//or the header will not display!
+		//-------TODO others
+		updateTable();
+		panecenter.setVisible(true);
 		mainframe.setVisible(true);
 	}
 	
