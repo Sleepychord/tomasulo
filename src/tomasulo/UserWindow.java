@@ -1,6 +1,7 @@
 package tomasulo;
 
 import java.awt.FlowLayout;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.*; 
@@ -21,12 +22,23 @@ public class UserWindow {
 	
 	public void runOneCycle(){
 		//Logic.runCycle & updateTable
+		logic.runCycle();
+		updateTable();
 	}
 	public void loadCommands(){
 		//Helper.readCommandsFromFileByDialog & updateTable
+		try {
+			Helper.readCommandsFromFileByDialog(cs, this.mainframe.getContentPane());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		updateTable();
 	}
 	public void reset(){
-		//Logic.clear() & updateTable, clock, pc...
+		//Logic.clear() & updateTable, clock...
+		logic.clear();
+		updateTable();
+		clock.setText("0");
 	}
 	public void openEditableMode(){
 		//disable some buttons
@@ -53,6 +65,8 @@ public class UserWindow {
 		mainframe.setTitle("Tomasulo");
 		mainframe.setSize(600, 400);
 		
+		listener = new UniversalActionListener(this);
+		
 		toolbar = new JToolBar();
 		JPanel panetop= new JPanel();
 		mainframe.getContentPane().add("North", panetop);
@@ -62,17 +76,39 @@ public class UserWindow {
 		filebtn.setText("open a file");
 		toolbar.add(filebtn);
 		JButton inputbtn = new JButton();
-		inputbtn.setText("input Instruction");
+		inputbtn.setText("Edit");
 		toolbar.add(inputbtn);
-		JButton databtn = new JButton();
-		databtn.setText("input data");
-		toolbar.add(databtn);
+		JButton autobtn = new JButton();
+		autobtn.setText("Auto");
+		toolbar.add(autobtn);
+		JButton stopbtn = new JButton();
+		stopbtn.setText("Stop");
+		toolbar.add(stopbtn);
 		JButton runbtn = new JButton();
 		runbtn.setText("run");
 		toolbar.add(runbtn);
+		JButton resetbtn = new JButton();
+		resetbtn.setText("Reset");
+		toolbar.add(resetbtn);
+		filebtn.setActionCommand("loadCommands");
+		inputbtn.setActionCommand("openEditableMode");
+		autobtn.setActionCommand("autoRun");
+		stopbtn.setActionCommand("stopAutoRun");
+		runbtn.setActionCommand("runOneCycle");
+		resetbtn.setActionCommand("reset");
 		
+		filebtn.addActionListener(listener);
+		inputbtn.addActionListener(listener);
+		autobtn.addActionListener(listener);
+		stopbtn.addActionListener(listener);
+		runbtn.addActionListener(listener);
+		resetbtn.addActionListener(listener);
 		panecenter= new JPanel();
 		mainframe.getContentPane().add("Center", panecenter);
+		
+		clock = new JLabel("0");
+		panecenter.add(clock);
+		
 		mainframe.setVisible(true);
 	}
 	
