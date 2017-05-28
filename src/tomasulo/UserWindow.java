@@ -1,5 +1,7 @@
 package tomasulo;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -7,12 +9,15 @@ import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
+import javafx.scene.control.TextField;
+
 public class UserWindow {
 	JFrame mainframe;
 	JToolBar toolbar;
 	JPanel panetop,panecenter;
 	JTable instr,loadq,storeq,station,funit,runit,mem;
 	JLabel clock;
+	JTextField gotoAddr;
 	//resources
 	LogicInterface logic;
 	ArrayList<Command> cs;
@@ -82,10 +87,12 @@ public class UserWindow {
 					 model.setValueAt(data[j], i, j);
 //					 System.out.println(model.getValueAt(i, j));
 				 }
-			 }				 
+			 }			
+			 for(int j = 0;j < data.length;j++)
+				 if(model.getValueAt(i, j).equals("-1"))
+				 model.setValueAt("", i, j);
 		}
 		//-------TODO others
-		for(int i=0;i<)
 	}
 	public void displayMemory(int addr){
 		//update table
@@ -150,20 +157,31 @@ public class UserWindow {
 		DefaultTableModel instr_dtm = new DefaultTableModel(new Object[][]{}, commandColumnNames);
 		instr = new JTable(instr_dtm);
 		instr.getTableHeader().setVisible(true);
-		panecenter.add(new JScrollPane(instr));//or the header will not display!
-		//-------TODO others
+		JScrollPane instrPanel = new JScrollPane(instr);
+		instrPanel.setPreferredSize(new Dimension(500, 300));
+		panecenter.add(instrPanel);//or the header will not display!
 		//------load/store table
-		final Object[] loadAndStoreColumnNames = 
+		final Object[] loadColumnNames = 
 			{"Name", "Busy", "Addr"};
 		Object[][] loadData = {{"Load1","No",""},{"Load2","No",""},{"Load3","No",""}};
-		loadq = new JTable(loadData,loadAndStoreColumnNames);
+		loadq = new JTable(loadData,loadColumnNames);
 		loadq.getTableHeader().setVisible(true);
-		panecenter.add(loadq);
+		JPanel loadPanel = new JPanel(new BorderLayout());
+		loadPanel.add("North", new JLabel("Load Queue"));
+		loadPanel.add("South", loadq);
+		loadPanel.add("Center", loadq.getTableHeader());
+		panecenter.add(loadPanel);
 		
-		Object[][] storeData = {{"Store1","No",""},{"Store2","No",""},{"Store3","No",""}};
-		storeq = new JTable(storeData,loadAndStoreColumnNames);
+		final Object[] StoreColumnNames = 
+			{"Name", "Busy", "Addr", "Vj", "Qj"};
+		Object[][] storeData = {{"Store1","No","","",""},{"Store2","No","","",""},{"Store3","No","","",""}};
+		storeq = new JTable(storeData,StoreColumnNames);
 		storeq.getTableHeader().setVisible(true);
-		panecenter.add(storeq);
+		JPanel storePanel = new JPanel(new BorderLayout());
+		storePanel.add("North", new JLabel("Store Queue"));
+		storePanel.add("Center", storeq.getTableHeader());
+		storePanel.add("South", storeq);
+		panecenter.add(storePanel);
 		//------stations table
 		final Object[] stationColumnNames = 
 			{"Time", "Name", "Busy", "Op", "Vj", "Vk", "Qj", "Qk"};
@@ -174,28 +192,55 @@ public class UserWindow {
 				{"","Mult1","No","","","","",""},
 				{"","Mult2","No","","","","",""}};
 		station = new JTable(statData,stationColumnNames);
-		station.getTableHeader().setVisible(true);
-		panecenter.add(station);
+		JPanel stationPanel = new JPanel(new BorderLayout());
+		stationPanel.add("North", new JLabel("Reservation Station"));
+		stationPanel.add("Center", station.getTableHeader());
+		stationPanel.add("South", station);
+		panecenter.add(stationPanel);
 		//------funit/runit table
-		final Object[] fuColumnNames = {"F0","F1","F2","F3","F4","F5","F6","F7","F8",
-				"F9","F10","F11","F12","F13","F14","F15","F16","F17","F18","F19","F20",
-				"F21","F22","F23","F24","F25","F26","F27","F28","F29","F30"};
-		Object[][] fuData = new Object[][]{};
+		String[] fuColumnNames = new String[11];
+		String[] fuData1 = new String[11];
+		for(int i = 0;i < 11;i++){
+			fuColumnNames[i] = "F" + Integer.toString(i);
+			fuData1[i] = "";
+		}
+		Object[][] fuData = new Object[][]{fuData1};
 		funit = new JTable(fuData,fuColumnNames);
 		funit.getTableHeader().setVisible(true);
-		panecenter.add(funit);
+		JPanel funitPanel = new JPanel(new BorderLayout());
+		funitPanel.add("North", new JLabel("Function Units"));
+		funitPanel.add("Center", funit.getTableHeader());
+		funitPanel.add("South", funit);
+		panecenter.add(funitPanel);
 		
-		final Object[] ruColumnNames = {"R0","R1","R2","R3","R4","R5","R6","R7","R8",
-				"R9","R10","R11","R12","R13","R14","R15","R16","R17","R18","R19","R20",
-				"R21","R22","R23","R24","R25","R26","R27","R28","R29","R30"};
-		Object[][] ruData = new Object[][]{};
+		String[] ruColumnNames = new String[11];
+		String[] ruData1 = new String[11];
+		for(int i = 0;i < 11;i++){
+			ruColumnNames[i] = "R" + Integer.toString(i);
+			ruData1[i] = "";
+		}
+		Object[][] ruData = new Object[][]{ruData1};
 		runit = new JTable(ruData,ruColumnNames);
 		runit.getTableHeader().setVisible(true);
-		panecenter.add(runit);
-		//------mem table
+		JPanel runitPanel = new JPanel(new BorderLayout());
+		runitPanel.add("North", new JLabel("Registers"));
+		runitPanel.add("Center", runit.getTableHeader());
+		runitPanel.add("South", runit);
+		panecenter.add(runitPanel);		//------mem table
+		//memory
 		mem = new JTable(2,6);
 		mem.setVisible(true);
-		panecenter.add(mem);
+		JPanel memPanel = new JPanel(new BorderLayout());
+		memPanel.add("North", new JLabel("Memory"));
+		memPanel.add("West", new JLabel("Input Address"));
+		gotoAddr = new JTextField();
+		memPanel.add("Center", gotoAddr);
+		JButton gotoButton =  new JButton("Goto");
+		gotoButton.setActionCommand("display");
+		gotoButton.addActionListener(listener);
+		memPanel.add("East", gotoButton);
+		memPanel.add("South", mem);
+		panecenter.add(memPanel);
 		
 		updateTable();
 		panecenter.setVisible(true);

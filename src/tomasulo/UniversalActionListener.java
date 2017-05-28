@@ -27,6 +27,12 @@ public class UniversalActionListener implements ActionListener {
 		case "reset":
 			w.reset();
 			break;
+		case "display":
+			String val = w.gotoAddr.getText();
+			if(val.matches("\\d+"))
+				w.displayMemory(Integer.parseInt(val));
+			else System.out.println("Segment Fault");
+			break;
 		default:
 			System.out.println("Undefined Action.");
 			break;
