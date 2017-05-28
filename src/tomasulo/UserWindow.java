@@ -5,29 +5,48 @@ import java.awt.FlowLayout;
 import javax.swing.*; 
 
 public class UserWindow {
-	public static void main(){
-		JFrame frame = new JFrame();
-		frame.setTitle("TomasuloËã·¨Ä£ÄâÆ÷");
-		frame.setSize(600, 400);
-		frame.setVisible(true);
+	JFrame mainframe;
+	JToolBar toolbar;
+	JPanel panetop,panecenter;
+	JTable Instr,state,loadq,stroeq,station,funit,runit,mem;
+	JLabel clock;
+	
+	public void writeTable(){
 		
-		JToolBar toolBar = new JToolBar();
-		JPanel pane0 = new JPanel();
-		frame.getContentPane().add("North", pane0);
-		pane0.setLayout(new FlowLayout(FlowLayout.LEFT));
-		pane0.add(toolBar);
+	}
+	public void reTable(){
+		
+	}
+	public UserWindow(){
+		mainframe = new JFrame();
+		mainframe.setTitle("Tomasulo");
+		mainframe.setSize(600, 400);
+		
+		toolbar = new JToolBar();
+		JPanel panetop= new JPanel();
+		mainframe.getContentPane().add("North", panetop);
+		panetop.setLayout(new FlowLayout(FlowLayout.LEFT));
+		panetop.add(toolbar);
 		JButton filebtn = new JButton();
 		filebtn.setText("open a file");
-		toolBar.add(filebtn);
+		toolbar.add(filebtn);
 		JButton inputbtn = new JButton();
 		inputbtn.setText("input Instruction");
-		toolBar.add(inputbtn);
+		toolbar.add(inputbtn);
 		JButton databtn = new JButton();
 		databtn.setText("input data");
-		toolBar.add(databtn);
+		toolbar.add(databtn);
 		JButton runbtn = new JButton();
 		runbtn.setText("run");
-		toolBar.add(runbtn);
+		toolbar.add(runbtn);
+		
+		panecenter= new JPanel();
+		mainframe.getContentPane().add("Center", panecenter);
+		mainframe.setVisible(true);
+	}
+	
+	public static void main(String args[]){
+		new UserWindow();
 		
 	}
     
