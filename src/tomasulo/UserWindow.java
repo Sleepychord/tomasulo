@@ -48,6 +48,23 @@ public class UserWindow {
 	}
 	public void writeTable(){
 		//set values in Registers, memory and commands tables to logic
+		DefaultTableModel model = (DefaultTableModel) (instr.getModel());
+		for(int i = 0;i < model.getRowCount();i++)
+		{
+			String op = (String)model.getValueAt(i, 0);
+			String[] arg = {(String) model.getValueAt(i, 1),
+					(String) model.getValueAt(i, 2),
+					(String) model.getValueAt(i, 3)};
+			if(cs.size() <= i)
+				cs.add(new Command(op, arg));
+			else{
+				if(cs.get(i).op != op) cs.get(i).op = op;
+				for(int j = 0;j < arg.length;j++)
+					if(cs.get(i).arg[j] != arg[j])
+						cs.get(i).arg[j] = arg[j];
+			}
+		}
+		//TODO others
 	}
 	public void updateTable(){
 		//get all data from logic & set them in table, update
