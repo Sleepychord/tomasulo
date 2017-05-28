@@ -64,7 +64,7 @@ public class UserWindow {
 						cs.get(i).arg[j] = arg[j];
 			}
 		}
-		//TODO others
+		//-------TODO others
 	}
 	public void updateTable(){
 		//get all data from logic & set them in table, update

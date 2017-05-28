@@ -9,8 +9,7 @@ public class Logic implements LogicInterface {
 	public ArrayList<Command> commands;
 	public int[] ru;
 	public double[] mem;
-	public 
-	FunctionUnit[] fu;
+	public FunctionUnit[] fu;
 	CalcReservationStation[] radd;
 	CalcReservationStation[] rmul;
 	LoadReservationStation[] rload;
