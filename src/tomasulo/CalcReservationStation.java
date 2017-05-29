@@ -12,7 +12,7 @@ public class CalcReservationStation extends ReservationStation{
 		String[] ret = new String[8];
 		ret[1] = this.name;
 		if(isBusy){
-			ret[0] = Integer.toString(time);
+			ret[0] = time >= 0  ? Integer.toString(time) : "";
 			ret[2] = "Yes";
 			ret[3] = op;
 			if(qj == null){

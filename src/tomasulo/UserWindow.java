@@ -113,7 +113,7 @@ public class UserWindow {
 		{
 //			 System.out.println(instr.getModel().getClass().getName());
 			 DefaultTableModel model = (DefaultTableModel) (instr.getModel());
-			 String [] data = cs.get(i).toStringArray();
+			 String [] data = cs.get(i).toStringArr();
 			 if(model.getRowCount() <= i)//if cs is more than row count
 				 model.addRow(data);
 			 else{
@@ -122,9 +122,6 @@ public class UserWindow {
 //					 System.out.println(model.getValueAt(i, j));
 				 }
 			 }			
-			 for(int j = 0;j < data.length;j++)
-				 if(model.getValueAt(i, j).equals("-1"))
-				 model.setValueAt("", i, j);
 		}
 		//load queue table
 		LoadReservationStation[] rs = (LoadReservationStation[])logic.getReservationStations("LOAD");
@@ -174,6 +171,18 @@ public class UserWindow {
 	}
 	public void displayMemory(int addr){
 		//update table
+		mem.clearSelection();
+		if(mem.isEditing())
+			mem.getCellEditor().stopCellEditing();
+		//-------memory
+		for(int i = 0;i < DisplayMemNum;i++)
+			if (startAddr + i < MaxMemory)	
+			{
+				if(mem.getValueAt(1, i) instanceof Double)
+					memory[startAddr + i] = (Double)mem.getValueAt(1, i);
+				else
+					memory[startAddr + i] = Double.parseDouble((String) mem.getValueAt(1, i));
+			}
 		startAddr = addr;
 		updateTable();
 	}
