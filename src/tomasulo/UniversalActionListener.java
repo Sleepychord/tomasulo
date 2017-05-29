@@ -17,6 +17,9 @@ public class UniversalActionListener implements ActionListener {
 		case "openEditableMode":
 			w.openEditableMode();
 			break;
+		case "closeEditableMode":
+			w.closeEditableMode();
+			break;
 		case "autoRun":
 			break;
 		case "stopAutoRun":
@@ -29,7 +32,7 @@ public class UniversalActionListener implements ActionListener {
 			break;
 		case "display":
 			String val = w.gotoAddr.getText();
-			if(val.matches("\\d+"))
+			if(val.matches("\\d+") && Integer.parseInt(val) < w.MaxMemory)
 				w.displayMemory(Integer.parseInt(val));
 			else System.out.println("Segment Fault");
 			break;

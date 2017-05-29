@@ -9,9 +9,10 @@ import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
-import javafx.scene.control.TextField;
 
 public class UserWindow {
+	final int DisplayMemNum = 6;
+	static final int MaxMemory = 4096;
 	JFrame mainframe;
 	JToolBar toolbar;
 	JPanel panetop,panecenter;
@@ -69,7 +70,18 @@ public class UserWindow {
 						cs.get(i).arg[j] = arg[j];
 			}
 		}
-		//-------TODO others
+		//-------memory
+		for(int i = 0;i < DisplayMemNum;i++)
+			if (startAddr + i < MaxMemory)	
+			{
+				memory[startAddr + i] = Double.parseDouble((String) mem.getValueAt(1, i));
+			}
+		//-------registers
+		for(int i = 0;i < registers.length;i++){
+			//TODO check
+			registers[i] = Integer.parseInt((String) runit.getValueAt(0, i));
+		}
+		
 	}
 	public void updateTable(){
 		//get all data from logic & set them in table, update
@@ -93,25 +105,49 @@ public class UserWindow {
 				 model.setValueAt("", i, j);
 		}
 		//load queue table
-		LoadReservationStation[] rs= (LoadReservationStation[])logic.getReservationStations("LOAD");
+		LoadReservationStation[] rs = (LoadReservationStation[])logic.getReservationStations("LOAD");
 		for(int i = 0;i < rs.length;i++)
 		{
-			loadq.setValueAt(rs[i].isBusy?"Yes":"No", i, 1);
-			loadq.setValueAt(rs[i].addr, i, 2);
+			String[] data = rs[i].toStringArr();
+ 			for(int j = 0;j < data.length;j++)
+ 				loadq.setValueAt(data[j], i, j);
 		}
 		//store queue table
 		StoreReservationStation[] store_rs = (StoreReservationStation[])logic.getReservationStations("STORE");
-		for(int i = 0;i < store_rs.length;i++){
-			storeq.setValueAt(store_rs[i].isBusy?"Yes":"No", i, 1);
-			storeq.setValueAt(store_rs[i].addr, i, 2);
-			storeq.setValueAt(store_rs[i].qj == null?Double.toString(store_rs[i].vj):"", i, 3);
-			storeq.setValueAt(store_rs[i].qj == null?"":store_rs[i].qj.name, i, 4);
+		for(int i = 0;i < store_rs.length;i++)
+		{
+			String[] data = store_rs[i].toStringArr();
+ 			for(int j = 0;j < data.length;j++)
+ 				storeq.setValueAt(data[j], i, j);
 		}
 		//calc table
 		CalcReservationStation[] add_rs = (CalcReservationStation[])logic.getReservationStations("ADD");
 		for(int i = 0;i < add_rs.length;i++)
 		{
-			
+			String[] data = add_rs[i].toStringArr();
+			for(int j = 0;j < data.length;j++)
+			station.setValueAt(data[j], i, j);
+		}
+		CalcReservationStation[] mul_rs = (CalcReservationStation[])logic.getReservationStations("MULT");
+		for(int i = 0;i < mul_rs.length;i++)
+		{
+			String[] data = mul_rs[i].toStringArr();
+			for(int j = 0;j < data.length;j++)
+			station.setValueAt(data[j], i + add_rs.length, j);
+		}
+		//Function Units table
+		FunctionUnit[] fus = logic.getFunctionUnits();
+		for(int i = 0;i < fus.length;i++)
+			funit.setValueAt(fus[i].getStringValue(), 0, i);
+		//Memory table
+		for(int i = 0;i < DisplayMemNum;i++)
+		if (startAddr + i < MaxMemory)	
+		{
+			mem.setValueAt(startAddr + i, 0, i);
+			mem.setValueAt(memory[startAddr + i], 1, i);
+		}else{
+			mem.setValueAt("", 0, i);
+			mem.setValueAt("", 1, i);
 		}
 	}
 	public void displayMemory(int addr){
@@ -142,6 +178,10 @@ public class UserWindow {
 		JButton inputbtn = new JButton();
 		inputbtn.setText("Edit");
 		toolbar.add(inputbtn);
+		JButton close_edit_btn = new JButton();
+		close_edit_btn.setText("Ok");
+		toolbar.add(close_edit_btn);
+		
 		JButton autobtn = new JButton();
 		autobtn.setText("Auto");
 		toolbar.add(autobtn);
@@ -154,8 +194,10 @@ public class UserWindow {
 		JButton resetbtn = new JButton();
 		resetbtn.setText("Reset");
 		toolbar.add(resetbtn);
+
 		filebtn.setActionCommand("loadCommands");
 		inputbtn.setActionCommand("openEditableMode");
+		close_edit_btn.setActionCommand("closeEditableMode");
 		autobtn.setActionCommand("autoRun");
 		stopbtn.setActionCommand("stopAutoRun");
 		runbtn.setActionCommand("runOneCycle");
@@ -167,6 +209,7 @@ public class UserWindow {
 		stopbtn.addActionListener(listener);
 		runbtn.addActionListener(listener);
 		resetbtn.addActionListener(listener);
+		close_edit_btn.addActionListener(listener);
 		panecenter= new JPanel();
 		mainframe.getContentPane().add("Center", panecenter);
 		
@@ -180,12 +223,12 @@ public class UserWindow {
 		instr = new JTable(instr_dtm);
 		instr.getTableHeader().setVisible(true);
 		JScrollPane instrPanel = new JScrollPane(instr);
-		instrPanel.setPreferredSize(new Dimension(500, 300));
+		instrPanel.setPreferredSize(new Dimension(400, 200));
 		panecenter.add(instrPanel);//or the header will not display!
 		//------load/store table
 		final Object[] loadColumnNames = 
-			{"Name", "Busy", "Addr"};
-		Object[][] loadData = {{"Load1","No",""},{"Load2","No",""},{"Load3","No",""}};
+			{"Time", "Name", "Busy", "Addr"};
+		Object[][] loadData = {{"","Load1","No",""},{"","Load2","No",""},{"","Load3","No",""}};
 		loadq = new JTable(loadData,loadColumnNames);
 		loadq.getTableHeader().setVisible(true);
 		JPanel loadPanel = new JPanel(new BorderLayout());
@@ -195,8 +238,8 @@ public class UserWindow {
 		panecenter.add(loadPanel);
 		
 		final Object[] StoreColumnNames = 
-			{"Name", "Busy", "Addr", "Vj", "Qj"};
-		Object[][] storeData = {{"Store1","No","","",""},{"Store2","No","","",""},{"Store3","No","","",""}};
+			{"Time", "Name", "Busy", "Addr", "Vj", "Qj"};
+		Object[][] storeData = {{"","Store1","No","","",""},{"","Store2","No","","",""},{"","Store3","No","","",""}};
 		storeq = new JTable(storeData,StoreColumnNames);
 		storeq.getTableHeader().setVisible(true);
 		JPanel storePanel = new JPanel(new BorderLayout());
@@ -250,7 +293,7 @@ public class UserWindow {
 		runitPanel.add("South", runit);
 		panecenter.add(runitPanel);		//------mem table
 		//memory
-		mem = new JTable(2,6);
+		mem = new JTable(2,DisplayMemNum);
 		mem.setVisible(true);
 		JPanel memPanel = new JPanel(new BorderLayout());
 		memPanel.add("North", new JLabel("Memory"));
@@ -265,6 +308,7 @@ public class UserWindow {
 		panecenter.add(memPanel);
 		
 		updateTable();
+		closeEditableMode();
 		panecenter.setVisible(true);
 		mainframe.setVisible(true);
 	}

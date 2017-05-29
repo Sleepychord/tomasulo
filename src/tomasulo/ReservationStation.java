@@ -10,4 +10,5 @@ abstract public class ReservationStation {
 		time = _t;
 		isBusy = false;
 	}
+	abstract String[] toStringArr();
 }
