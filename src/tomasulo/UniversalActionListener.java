@@ -21,8 +21,10 @@ public class UniversalActionListener implements ActionListener {
 			w.closeEditableMode();
 			break;
 		case "autoRun":
+			w.autoRun();
 			break;
 		case "stopAutoRun":
+			w.stopAutoRun();
 			break;
 		case "runOneCycle":
 			w.runOneCycle();

@@ -8,6 +8,8 @@ import java.util.ArrayList;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.util.Timer;  
+import java.util.TimerTask;  
 
 
 public class UserWindow {
@@ -26,11 +28,33 @@ public class UserWindow {
 	int[] registers;
 	int startAddr;//displayed start addr
 	UniversalActionListener listener;
-	
+	Timer timer;
+	public void autoRun(){
+		String inputValue = JOptionPane.showInputDialog("Please input the number of  maximun cycles to run"); 
+		if(inputValue.matches("\\d+")){
+			timer = new Timer();
+			timer.scheduleAtFixedRate(new TimerTask() {
+					int n = Integer.parseInt(inputValue);
+					@Override
+					public void run() {
+						if(n-- > 0)
+							runOneCycle();
+						else this.cancel();
+					}
+				}, 0, 250);
+		}
+		//TODO buttons
+	}
+	public void stopAutoRun() {
+		if(timer != null)
+			timer.cancel();
+		//TODO buttons
+	}
 	public void runOneCycle(){
 		//Logic.runCycle & updateTable
 		logic.runCycle();
 		updateTable();
+		
 	}
 	public void loadCommands(){
 		//Helper.readCommandsFromFileByDialog & updateTable
@@ -352,6 +376,7 @@ public class UserWindow {
 	public static void main(String args[]){
 		new UserWindow();
 	}
+
     
     
 }
