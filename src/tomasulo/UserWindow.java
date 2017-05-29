@@ -48,9 +48,27 @@ public class UserWindow {
 	}
 	public void openEditableMode(){
 		//disable some buttons
+		instr.setEnabled(true);
+		runit.setEnabled(true);
+		mem.setEnabled(true);
+		//TODO buttons
 	}
 	public void closeEditableMode(){
 		//need to writeTable() & restore buttons
+		instr.clearSelection();
+		runit.clearSelection();
+		mem.clearSelection();
+		if(mem.isEditing())
+			mem.getCellEditor().stopCellEditing();
+		if(instr.isEditing())
+			instr.getCellEditor().stopCellEditing();
+		if(runit.isEditing())
+			runit.getCellEditor().stopCellEditing();
+		writeTable();
+		instr.setEnabled(false);
+		runit.setEnabled(false);
+		mem.setEnabled(false);
+		//TODO buttons
 	}
 	public void writeTable(){
 		//set values in Registers, memory and commands tables to logic
@@ -74,7 +92,11 @@ public class UserWindow {
 		for(int i = 0;i < DisplayMemNum;i++)
 			if (startAddr + i < MaxMemory)	
 			{
-				memory[startAddr + i] = Double.parseDouble((String) mem.getValueAt(1, i));
+				if(mem.getValueAt(1, i) instanceof Double)
+					memory[startAddr + i] = (Double)mem.getValueAt(1, i);
+				else
+					memory[startAddr + i] = Double.parseDouble((String) mem.getValueAt(1, i));
+//				System.out.printf("%d %.2f %s\n", startAddr + i, memory[startAddr + i], (String) mem.getValueAt(1, i));
 			}
 		//-------registers
 		for(int i = 0;i < registers.length;i++){
@@ -144,7 +166,7 @@ public class UserWindow {
 		if (startAddr + i < MaxMemory)	
 		{
 			mem.setValueAt(startAddr + i, 0, i);
-			mem.setValueAt(memory[startAddr + i], 1, i);
+			mem.setValueAt(Double.toString(memory[startAddr + i]), 1, i);
 		}else{
 			mem.setValueAt("", 0, i);
 			mem.setValueAt("", 1, i);
@@ -219,7 +241,12 @@ public class UserWindow {
 		//------command table
 		final Object[] commandColumnNames = 
 			{"Operation", "Arg1", "Arg2", "Arg3", "issue", "exec comp", "write result"};
-		DefaultTableModel instr_dtm = new DefaultTableModel(new Object[][]{}, commandColumnNames);
+		DefaultTableModel instr_dtm = new DefaultTableModel(new Object[][]{}, commandColumnNames){
+			@Override
+			public boolean isCellEditable(int row,int column){  
+				return (column <= 3);
+			}
+		};
 		instr = new JTable(instr_dtm);
 		instr.getTableHeader().setVisible(true);
 		JScrollPane instrPanel = new JScrollPane(instr);
@@ -282,7 +309,7 @@ public class UserWindow {
 		String[] ruData1 = new String[11];
 		for(int i = 0;i < 11;i++){
 			ruColumnNames[i] = "R" + Integer.toString(i);
-			ruData1[i] = "";
+			ruData1[i] = "0";
 		}
 		Object[][] ruData = new Object[][]{ruData1};
 		runit = new JTable(ruData,ruColumnNames);

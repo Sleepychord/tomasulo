@@ -10,9 +10,9 @@ public class CalcReservationStation extends ReservationStation{
 	@Override
 	public String[] toStringArr(){
 		String[] ret = new String[8];
-		ret[0] = this.time == -1? "":Integer.toString(time);
 		ret[1] = this.name;
 		if(isBusy){
+			ret[0] = Integer.toString(time);
 			ret[2] = "Yes";
 			ret[3] = op;
 			if(qj == null){
@@ -31,7 +31,7 @@ public class CalcReservationStation extends ReservationStation{
 			}	
 		}else{
 			ret[2] = "No";
-			ret[3] = ret[4] = ret[5] = ret[6] = ret[7] = "";
+			ret[0] = ret[3] = ret[4] = ret[5] = ret[6] = ret[7] = "";
 		}
 		return ret;
 	}
