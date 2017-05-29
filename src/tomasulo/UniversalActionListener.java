@@ -38,6 +38,9 @@ public class UniversalActionListener implements ActionListener {
 				w.displayMemory(Integer.parseInt(val));
 			else System.out.println("Segment Fault");
 			break;
+		case "addRows":
+			w.addRows();
+			break;
 		default:
 			System.out.println("Undefined Action.");
 			break;

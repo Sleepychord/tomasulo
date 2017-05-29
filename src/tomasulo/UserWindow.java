@@ -211,6 +211,12 @@ public class UserWindow {
 		startAddr = addr;
 		updateTable();
 	}
+	public void addRows() {
+		 DefaultTableModel model = (DefaultTableModel) (instr.getModel());
+		 model.addRow(new Command("", new String[]{"","",""}).toStringArr());
+		 openEditableMode();
+		 instr.editCellAt(model.getRowCount()-1, 0);
+	}
 	public UserWindow(){
 		logic = new Logic();
 		memory = logic.getMemory();
@@ -295,6 +301,8 @@ public class UserWindow {
 		section1.add("West",instrPanel);
 		JButton addR=new JButton("Add Rows");
 		section1.add("South",addR);
+		addR.setActionCommand("addRows");
+		addR.addActionListener(listener);
 		panecenter.add(section1);//or the header will not display!
 		
 		JPanel section2=new JPanel();
@@ -402,6 +410,7 @@ public class UserWindow {
 	public static void main(String args[]){
 		new UserWindow();
 	}
+
 
     
     
