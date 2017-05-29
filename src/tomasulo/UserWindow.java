@@ -131,7 +131,7 @@ public class UserWindow {
 	}
 	public void updateTable(){
 		//get all data from logic & set them in table, update
-		
+		clock.setText("Clock: " + Integer.toString(logic.getClock()));
 		//-------instr table
 		for(int i = 0;i < cs.size();i++)
 		{
@@ -268,7 +268,7 @@ public class UserWindow {
 		panecenter= new JPanel();
 		mainframe.getContentPane().add("Center", panecenter);
 		
-		clock = new JLabel("0");
+		clock = new JLabel("Clock: 0");
 		panecenter.add(clock);
 		//construct tables
 		//------command table
