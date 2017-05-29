@@ -3,6 +3,7 @@ package tomasulo;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -228,26 +229,33 @@ public class UserWindow {
 		panetop.setLayout(new FlowLayout(FlowLayout.LEFT));
 		panetop.add(toolbar);
 		JButton filebtn = new JButton();
-		filebtn.setText("open a file");
+		filebtn.setText("Open");
+		filebtn.setIcon(new ImageIcon(getClass().getResource("/images/Open.png")));
 		toolbar.add(filebtn);
 		JButton inputbtn = new JButton();
 		inputbtn.setText("Edit");
+		inputbtn.setIcon(new ImageIcon(getClass().getResource("/images/edit.png")));
 		toolbar.add(inputbtn);
 		JButton close_edit_btn = new JButton();
 		close_edit_btn.setText("Ok");
+		close_edit_btn.setIcon(new ImageIcon(getClass().getResource("/images/Ok.png")));
 		toolbar.add(close_edit_btn);
 		
 		JButton autobtn = new JButton();
 		autobtn.setText("Auto");
+		autobtn.setIcon(new ImageIcon(getClass().getResource("/images/auto.png")));
 		toolbar.add(autobtn);
 		JButton stopbtn = new JButton();
 		stopbtn.setText("Stop");
+		stopbtn.setIcon(new ImageIcon(getClass().getResource("/images/stop.png")));
 		toolbar.add(stopbtn);
 		JButton runbtn = new JButton();
-		runbtn.setText("run");
+		runbtn.setText("Run");
+		runbtn.setIcon(new ImageIcon(getClass().getResource("/images/run.png")));
 		toolbar.add(runbtn);
 		JButton resetbtn = new JButton();
 		resetbtn.setText("Reset");
+		resetbtn.setIcon(new ImageIcon(getClass().getResource("/images/reset.png")));
 		toolbar.add(resetbtn);
 
 		filebtn.setActionCommand("loadCommands");
@@ -268,12 +276,12 @@ public class UserWindow {
 		panecenter= new JPanel();
 		mainframe.getContentPane().add("Center", panecenter);
 		
-		clock = new JLabel("Clock: 0");
-		panecenter.add(clock);
 		//construct tables
 		//------command table
+		JPanel section1=new JPanel();
+		section1.setLayout(new BorderLayout());
 		final Object[] commandColumnNames = 
-			{"Operation", "Arg1", "Arg2", "Arg3", "issue", "exec comp", "write result"};
+			{"Operation", "Arg1", "Arg2", "Arg3", "issue", "exec", "write"};
 		DefaultTableModel instr_dtm = new DefaultTableModel(new Object[][]{}, commandColumnNames){
 			@Override
 			public boolean isCellEditable(int row,int column){  
@@ -284,7 +292,18 @@ public class UserWindow {
 		instr.getTableHeader().setVisible(true);
 		JScrollPane instrPanel = new JScrollPane(instr);
 		instrPanel.setPreferredSize(new Dimension(400, 200));
-		panecenter.add(instrPanel);//or the header will not display!
+		section1.add("West",instrPanel);
+		JButton addR=new JButton("Add Rows");
+		section1.add("South",addR);
+		panecenter.add(section1);//or the header will not display!
+		
+		JPanel section2=new JPanel();
+		section2.setLayout(new GridLayout(3,1));
+		clock = new JLabel("Clock: 0");
+		clock.setIcon(new ImageIcon(getClass().getResource("/images/time.png")));
+		clock.setHorizontalAlignment(SwingConstants.CENTER);
+		//panecenter.add(clock);
+		section2.add(clock);;
 		//------load/store table
 		final Object[] loadColumnNames = 
 			{"Time", "Name", "Busy", "Addr"};
@@ -295,7 +314,8 @@ public class UserWindow {
 		loadPanel.add("North", new JLabel("Load Queue"));
 		loadPanel.add("South", loadq);
 		loadPanel.add("Center", loadq.getTableHeader());
-		panecenter.add(loadPanel);
+		//panecenter.add(loadPanel);
+		section2.add(loadPanel);
 		
 		final Object[] StoreColumnNames = 
 			{"Time", "Name", "Busy", "Addr", "Vj", "Qj"};
@@ -306,7 +326,9 @@ public class UserWindow {
 		storePanel.add("North", new JLabel("Store Queue"));
 		storePanel.add("Center", storeq.getTableHeader());
 		storePanel.add("South", storeq);
-		panecenter.add(storePanel);
+		//panecenter.add(storePanel);
+		section2.add(storePanel);
+		panecenter.add(section2);
 		//------stations table
 		final Object[] stationColumnNames = 
 			{"Time", "Name", "Busy", "Op", "Vj", "Vk", "Qj", "Qk"};
@@ -322,6 +344,23 @@ public class UserWindow {
 		stationPanel.add("Center", station.getTableHeader());
 		stationPanel.add("South", station);
 		panecenter.add(stationPanel);
+		
+		//memory
+		mem = new JTable(2,DisplayMemNum);
+		mem.setVisible(true);
+		
+		JPanel memPanel = new JPanel(new BorderLayout());
+		memPanel.add("North", new JLabel("Memory"));
+		memPanel.add("West", new JLabel("Input Address"));
+		gotoAddr = new JTextField();
+		memPanel.add("Center", gotoAddr);
+		JButton gotoButton =  new JButton("Goto");
+		gotoButton.setActionCommand("display");
+		gotoButton.addActionListener(listener);
+		memPanel.add("East", gotoButton);
+		memPanel.add("South", mem);
+		panecenter.add(memPanel);
+		
 		//------funit/runit table
 		String[] fuColumnNames = new String[11];
 		String[] fuData1 = new String[11];
@@ -351,22 +390,9 @@ public class UserWindow {
 		runitPanel.add("North", new JLabel("Registers"));
 		runitPanel.add("Center", runit.getTableHeader());
 		runitPanel.add("South", runit);
-		panecenter.add(runitPanel);		//------mem table
-		//memory
-		mem = new JTable(2,DisplayMemNum);
-		mem.setVisible(true);
-		JPanel memPanel = new JPanel(new BorderLayout());
-		memPanel.add("North", new JLabel("Memory"));
-		memPanel.add("West", new JLabel("Input Address"));
-		gotoAddr = new JTextField();
-		memPanel.add("Center", gotoAddr);
-		JButton gotoButton =  new JButton("Goto");
-		gotoButton.setActionCommand("display");
-		gotoButton.addActionListener(listener);
-		memPanel.add("East", gotoButton);
-		memPanel.add("South", mem);
-		panecenter.add(memPanel);
+		panecenter.add(runitPanel);		
 		
+		panecenter.setLayout(new FlowLayout(FlowLayout.CENTER,20,15));
 		updateTable();
 		closeEditableMode();
 		panecenter.setVisible(true);
