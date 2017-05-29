@@ -34,7 +34,7 @@ public class UniversalActionListener implements ActionListener {
 			break;
 		case "display":
 			String val = w.gotoAddr.getText();
-			if(val.matches("\\d+") && Integer.parseInt(val) < w.MaxMemory)
+			if(val.matches("\\d+") && Integer.parseInt(val) < UserWindow.MaxMemory)
 				w.displayMemory(Integer.parseInt(val));
 			else System.out.println("Segment Fault");
 			break;

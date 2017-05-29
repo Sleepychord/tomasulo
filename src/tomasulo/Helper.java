@@ -7,7 +7,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 
 public class Helper {
