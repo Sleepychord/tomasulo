@@ -14,10 +14,13 @@ public class Logic implements LogicInterface {
 	CalcReservationStation[] rmul;
 	LoadReservationStation[] rload;
 	StoreReservationStation[] rstore;
+	ReservationStation addUsed, mulUsed;
 	public Logic(){
 		this(11, 3, 2, 3, 3, 11, 4096);
 	}
 	public Logic(int nf, int nadd, int nmul, int nload, int nstore, int nru, int nmem){
+		addUsed = null;
+		mulUsed = null;
 		commands = new ArrayList<Command>();
 		fu = new FunctionUnit[nf];
 		for(int i = 0;i < nf;i++)
@@ -137,6 +140,9 @@ public class Logic implements LogicInterface {
 		ret |= countDown(rmul);
 		ret |= countDown(rload);
 		ret |= countDown(rstore);
+		//go out first pipeline?
+		if(addUsed != null) addUsed = null;
+		if(mulUsed != null) mulUsed = null;
 		//check waiting
 		for(CalcReservationStation r: radd)
 			if(r.isBusy && r.time < 0)	//waiting 
@@ -151,8 +157,9 @@ public class Logic implements LogicInterface {
 					r.qk = null;
 					ret = true;
 				}
-				if(r.qj == null && r.qk == null){
+				if(r.qj == null && r.qk == null && addUsed == null){
 					r.time = 2;//add & sub : 2 cycle
+					addUsed = r;
 				}
 			}
 		for(CalcReservationStation r: rmul)
@@ -168,10 +175,11 @@ public class Logic implements LogicInterface {
 					r.qk = null;
 					ret = true;
 				}
-				if(r.qj == null && r.qk == null){
+				if(r.qj == null && r.qk == null && mulUsed == null){
 					if(r.c.op.equals("MULD")) r.time = 10;
 					else if(r.c.op.equals("DIVD")) r.time = 40;
 					else System.out.println("Error! Undefined Operator.");
+					mulUsed = r;
 				}
 			}		
 		for(StoreReservationStation r: rstore)
