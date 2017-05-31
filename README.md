@@ -1,4 +1,4 @@
-#Tomasulo算法模拟器实验文档
+# Tomasulo算法模拟器实验文档
 
 小组成员
 
@@ -6,7 +6,7 @@
 
 2014011335 计43 王红梅
 
-##算法思路
+## 算法思路
 Tomasulo算法通过寄存器换名来消除WAW和WAR冲突，从而允许指令的乱序执行。其中寄存器换名也可理解为用由保留站、load/store Buffer组成的虚拟内存集代替真实的浮点寄存器。
 在该算法中，指令的执行分为以下三步：
 
@@ -20,7 +20,7 @@ Tomasulo算法通过寄存器换名来消除WAW和WAR冲突，从而允许指令
 (3) write back
 计算结束后将计算结果写入到所有等待该结果的寄存器中和保留站中，并将当前保留站标记为可用
 
-##主要接口与类
+## 主要接口与类
 ###### ReservationStation
 保留站的基类，定义了保留站名称name、轮数time、空闲状态isBusy和执行指令command等成员变量。
 ###### LoadReservationStation
@@ -73,7 +73,7 @@ displayMemory(addr)：显示从起始位置addr往后n位的mem信息
 ###### UniversalActionListener
 全局监听类，实现ActionListener接口定义的方法ActionPerformed()，根据action的来源做出相应处理，调用UserWindow的相应方法。
 
-##实现的功能
+## 实现的功能
 
 根据实验要求，模拟器实现了如下功能：
 
