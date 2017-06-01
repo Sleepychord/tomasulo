@@ -260,11 +260,11 @@ public class Logic implements LogicInterface {
 						if(tmp.r == null){
 							r.qj = null;
 							r.vj = tmp.v;
-							r.time = -1;
+							r.time = 2;
 						}else{
 							r.qj = tmp.r;
 							r.vj = 0;
-							r.time = 2;
+							r.time = -1;
 						}
 						break;
 					}

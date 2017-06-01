@@ -38,8 +38,13 @@ public class UserWindow {
 					int n = Integer.parseInt(inputValue);
 					@Override
 					public void run() {
-						if(n-- > 0)
-							runOneCycle();
+						if(n-- > 0){
+							if(!runOneCycle())
+							{
+								n = 0;
+								this.cancel();
+							}
+						}
 						else this.cancel();
 					}
 				}, 0, 250);
@@ -51,10 +56,15 @@ public class UserWindow {
 			timer.cancel();
 		//TODO buttons
 	}
-	public void runOneCycle(){
+	public boolean runOneCycle(){
 		//Logic.runCycle & updateTable
-		logic.runCycle();
+		boolean ret = true;
+		if(!logic.runCycle()){
+			JOptionPane.showMessageDialog(null, "Already finished.", "Warning", JOptionPane.ERROR_MESSAGE);
+			ret = false;
+		}
 		updateTable();
+		return ret;
 		
 	}
 	public void loadCommands(){
@@ -161,6 +171,7 @@ public class UserWindow {
 		for(int i = 0;i < store_rs.length;i++)
 		{
 			String[] data = store_rs[i].toStringArr();
+			System.out.println(data[0]);
  			for(int j = 0;j < data.length;j++)
  				storeq.setValueAt(data[j], i, j);
 		}
