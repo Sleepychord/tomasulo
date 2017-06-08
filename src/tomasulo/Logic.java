@@ -179,7 +179,7 @@ public class Logic implements LogicInterface {
 					//conflict in loop in EX
 					boolean conflict = false;
 					for(CalcReservationStation r2 : rmul){
-						if(r2.isBusy && r2.time >= 0 && (r.time - r2.time) % 6 == 0)
+						if(r2.isBusy && r2.op.equals("DIVD") &&r2.time >= 0 && (r.time - r2.time) % 6 == 0)
 							conflict = true;
 							break;
 					}
