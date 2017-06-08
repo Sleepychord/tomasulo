@@ -176,6 +176,14 @@ public class Logic implements LogicInterface {
 					ret = true;
 				}
 				if(r.qj == null && r.qk == null && mulUsed == null){
+					//conflict in loop in EX
+					boolean conflict = false;
+					for(CalcReservationStation r2 : rmul){
+						if(r2.isBusy && r2.time >= 0 && (r.time - r2.time) % 6 == 0)
+							conflict = true;
+							break;
+					}
+					if(conflict) continue;
 					if(r.c.op.equals("MULD")) r.time = 10;
 					else if(r.c.op.equals("DIVD")) r.time = 40;
 					else System.out.println("Error! Undefined Operator.");
